@@ -1,0 +1,67 @@
+plugins {
+    id 'java-library'
+    id 'jacoco'
+    id 'application'
+}
+
+group 'com.spinyowl'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+javadoc.options.encoding = 'UTF-8'
+
+repositories {
+    mavenCentral()
+}
+
+def muserver_version = '0.72.19'
+def slf4j_version = '2.0.3'
+def logback_version = '1.4.4'
+def jackson_version = '2.14.0-rc3'
+def lombok_version = '1.18.24'
+def mockito_version = '4.8.1'
+def junit_version = '5.9.0'
+
+dependencies {
+    implementation group: 'io.muserver', name: 'mu-server', version: muserver_version
+
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: slf4j_version
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: logback_version
+
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jdk8', version: jackson_version
+    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310', version: jackson_version
+    implementation group: 'com.fasterxml.jackson.jaxrs', name: 'jackson-jaxrs-json-provider', version: jackson_version
+
+    implementation group: 'com.google.inject', name: 'guice', version: '5.1.0'
+
+    api group: 'org.projectlombok', name: 'lombok', version: lombok_version
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombok_version
+
+    // test
+    testCompileOnly group: 'org.projectlombok', name: 'lombok', version: lombok_version
+    testAnnotationProcessor group: 'org.projectlombok', name: 'lombok', version: lombok_version
+
+    testImplementation group: 'org.mockito', name: 'mockito-core', version: mockito_version
+    testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: mockito_version
+
+    testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: junit_version
+    testRuntimeOnly group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: junit_version
+
+    testImplementation "com.google.truth:truth:1.1.3"
+}
+application {
+    mainClass = "com.spinyowl.booking.application.Main"
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+    dependsOn test // tests are required to run before generating the report
+    reports.xml.required = true
+}
